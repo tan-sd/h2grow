@@ -1,5 +1,5 @@
 from constants import TELEGRAM_BOT_KEY
-from utils.telegram_handlers import start, send_reminder, show_reminder, edit_reminder, forecast
+from utils.telegram_handlers import start, send_reminder, show_reminder, edit_reminder, show_roster, edit_roster, forecast
 from telegram.ext import ApplicationBuilder, ConversationHandler, CommandHandler
 import datetime
 import pytz
@@ -18,6 +18,8 @@ def main() -> None:
     application.add_handler(CommandHandler('sendreminder', send_reminder))
     application.add_handler(CommandHandler('showreminder', show_reminder))
     application.add_handler(CommandHandler('editreminder', edit_reminder))
+    application.add_handler(CommandHandler('showroster', show_roster))
+    application.add_handler(CommandHandler('editroster', edit_roster))
     application.add_handler(CommandHandler('forecast', forecast))
 
     job_queue.run_daily(

@@ -8,6 +8,17 @@ import pytz
 # Default reminder time
 reminder_time = {"hour": 8, "minute": 0}
 
+# Default roster
+roster = {
+    "Monday": "Daniel Tan",
+    "Tuesday": "Aidan Lee",
+    "Wednesday": "Kelvin Lim",
+    "Thursday": "Tan Sheng Da",
+    "Friday": "Zachary Wah",
+    "Saturday": "Angela Wee",
+    "Sunday": "Nicole Tay"
+}
+
 """Define the possible values for forecast"""
 # Dry & Clear Weather (No Rain), watering is needed
 dry_weather = [
@@ -156,7 +167,48 @@ async def edit_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
 """"""
 
 """ROSTER"""
+async def show_roster(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Shows the current roster."""
+    await update.message.reply_text(
+        text="👥 *Current Roster*\n\n"
+        f"*Monday*: {roster['Monday']}\n"
+        f"*Tuesday*: {roster['Tuesday']}\n"
+        f"*Wednesday*: {roster['Wednesday']}\n"
+        f"*Thursday*: {roster['Thursday']}\n"
+        f"*Friday*: {roster['Friday']}\n"
+        f"*Saturday*: {roster['Saturday']}\n"
+        f"*Sunday*: {roster['Sunday']}\n",
+        parse_mode="markdown"
+    )
 
+async def edit_roster(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Allows users to edit the roster."""
+    if len(context.args) < 2:
+        await update.message.reply_text(
+            "⚠️ Usage: /editroster <day> <name>\n\n"
+            "Example: `/editroster Monday John Doe`\n"
+            "This updates Monday's roster to John Doe",
+            parse_mode="markdown"
+        )
+        return
+
+    day = context.args[0].capitalize()
+    name = " ".join(context.args[1:])  # Combine multiple words for the name
+
+    if day not in roster:
+        await update.message.reply_text(
+            text="❌*Invalid day!* Please enter a valid day (Monday to Sunday)",
+            parse_mode="markdown"
+        )
+        return
+
+    # Update the roster
+    roster[day] = name
+    await update.message.reply_text(
+        text=f"✅ *Roster updated!* {day} is now assigned to {name}",
+        parse_mode="markdown"
+    )
+""""""
 
 """FORECAST"""
 async def forecast(update: Update, context: ContextTypes.DEFAULT_TYPE):
