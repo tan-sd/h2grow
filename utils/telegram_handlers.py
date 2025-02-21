@@ -72,7 +72,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             "You can control me by sending these commands:\n\n"
             
             "*Reminders*:\n"
-            "/showreminder - List reminder\n"
+            "/showreminder - Show reminder\n"
             "/editreminder - Edit reminder\n\n"
 
             "*Roster*:\n"
@@ -80,7 +80,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             "/editroster - Edit roster\n\n"
 
             "*Weather*:\n"
-            "/forecast - View weather forecast\n\n",
+            "/forecast - Show weather forecast\n\n",
             
             parse_mode='Markdown'
         )
