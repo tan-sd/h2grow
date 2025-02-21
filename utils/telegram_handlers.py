@@ -89,13 +89,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 """REMINDERS"""
 async def send_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Sends the watering reminder to the Telegram Channel."""
-    job = context.job
 
     # Fetch latest weather data
     hour_24_forecast = await fetch_weather()
 
     # Get today's date and day
     today = datetime.now().strftime("%A, %d %B %Y")
+    day_of_week = datetime.now().strftime("%A")
+
+    # Get assigned person from the roster
+    assigned_person = roster.get(day_of_week, "No one assigned")
 
     if hour_24_forecast in dry_weather:
         watering_message = "💧 *Please water the plants today!*\nLet's keep them happy and hydrated. 🌿✨"
@@ -107,10 +110,11 @@ async def send_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = (
         f"━━━━━━━━━━━━━━━━━━━━\n"
         f"📅 *{today}*\n"
+        f"👤 *Gardener of the Day:* {assigned_person}\n"
         f"☁️ *Weather Forecast:* {hour_24_forecast}\n"
         f"━━━━━━━━━━━━━━━━━━━━\n\n"
         f"{watering_message}\n\n"
-        f"🌍 *Sustainable Gardening Together!* 🌱"
+        # f"🌍 *Sustainable Gardening Together!* 🌱"
     )
 
     print("✅ Daily reminder sent.")
