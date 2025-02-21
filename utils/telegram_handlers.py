@@ -57,7 +57,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message: 
         message = await update.message.reply_text(
             "🌱 *Welcome to H2Grow!*\n\n"
-            "I can help you to give and manage reminders to water the community garden.\n\n"
+            "I can help you to manage and send watering reminders for the community garden.\n\n"
             "You can control me by sending these commands:\n\n"
             
             "*Reminders*:\n"
@@ -75,7 +75,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         )
     return ConversationHandler.END
 
-async def send_reminder(context: ContextTypes.DEFAULT_TYPE):
+"""REMINDERS"""
+async def send_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Sends the watering reminder to the Telegram Channel."""
     job = context.job
 
@@ -106,6 +107,15 @@ async def send_reminder(context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=CHANNEL_ID,
         text=message,
+        parse_mode="markdown"
+    )
+
+async def show_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Shows the current reminder time in 24-hour format."""
+    global reminder_time
+    time_str = f"{reminder_time['hour']:02d}:{reminder_time['minute']:02d}"
+    await update.message.reply_text(
+        text=f"🔔 *Daily Reminder Time*: {time_str}",
         parse_mode="markdown"
     )
 
@@ -143,7 +153,12 @@ async def edit_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except ValueError:
         await update.message.reply_text("❌ Invalid format! Please use HH:MM in 24-hour format.")
+""""""
 
+"""ROSTER"""
+
+
+"""FORECAST"""
 async def forecast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Sends the latest 24-hour weather forecast"""
     # Fetch latest weather data
@@ -164,3 +179,4 @@ async def forecast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     return ConversationHandler.END
+""""""
