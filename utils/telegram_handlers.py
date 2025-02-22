@@ -68,10 +68,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message: 
         message = await update.message.reply_text(
             "🌱 *Welcome to H2Grow!*\n\n"
-            "I can help you to manage and send watering reminders for the community garden.\n\n"
+            "I can help you to manage and send watering reminders for your community garden.\n\n"
             "You can control me by sending these commands:\n\n"
             
-            "*Reminders*:\n"
+            "*Reminder*:\n"
             "/showreminder - Show reminder\n"
             "/editreminder - Edit reminder\n\n"
 
