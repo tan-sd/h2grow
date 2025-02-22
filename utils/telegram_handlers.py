@@ -1,23 +1,13 @@
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 from constants import CHANNEL_ID, NEA_24_HOUR_FORECAST_URL, NEA_2_HOUR_FORECAST_URL
-from datetime import datetime
+from utils.firebase import get_fb_reminder, edit_fb_reminder, get_fb_roster, edit_fb_roster
+from datetime import datetime, time
 import requests
 import pytz
 
-# Default reminder time
-reminder_time = {"hour": 8, "minute": 0}
-
-# Default roster
-roster = {
-    "Monday": "Daniel Tan",
-    "Tuesday": "Aidan Lee",
-    "Wednesday": "Kelvin Lim",
-    "Thursday": "Tan Sheng Da",
-    "Friday": "Zachary Wah",
-    "Saturday": "Angela Wee",
-    "Sunday": "Nicole Tay"
-}
+# Retrieve the roster from Firebase
+roster = get_fb_roster()
 
 """Define the possible values for forecast"""
 # Dry & Clear Weather (No Rain), watering is needed
@@ -87,7 +77,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return ConversationHandler.END
 
 """REMINDERS"""
-async def send_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def send_reminder(context: ContextTypes.DEFAULT_TYPE):
     """Sends the watering reminder to the Telegram Channel."""
 
     # Fetch latest weather data
@@ -127,27 +117,28 @@ async def send_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def show_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Shows the current reminder time in 24-hour format."""
-    global reminder_time
-    time_str = f"{reminder_time['hour']:02d}:{reminder_time['minute']:02d}"
+    # fetch reminder time from Firebase
+    reminder_time = get_fb_reminder()
     await update.message.reply_text(
-        text=f"🔔 *Daily Reminder Time*: {time_str}",
+        text=f"🔔 *Daily Reminder Time*: {reminder_time}",
         parse_mode="markdown"
     )
 
 async def edit_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Allows users to edit the reminder time (HH:MM)."""
-    global reminder_time
-    
+
     if len(context.args) != 1:
         await update.message.reply_text("⏰ Usage: /editreminder HH:MM (24-hour format)")
         return
 
     try:
         time_str = context.args[0]
-        new_time = datetime.strptime(time_str, "%H:%M").time()
 
-        reminder_time["hour"] = new_time.hour
-        reminder_time["minute"] = new_time.minute
+        new_time = datetime.strptime(time_str, "%H:%M").time()
+        timezone = pytz.timezone('Asia/Kuala_Lumpur')
+        new_time = time(new_time.hour, new_time.minute, tzinfo=timezone)
+
+        await edit_fb_reminder(time_str)
 
         job_queue = context.job_queue
         if job_queue is None:
@@ -160,7 +151,7 @@ async def edit_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         job_queue.run_daily(
             send_reminder,
-            time=new_time.replace(tzinfo=pytz.timezone('Asia/Kuala_Lumpur')),
+            new_time,
             name="daily_reminder"
         )
 
@@ -173,15 +164,16 @@ async def edit_reminder(update: Update, context: ContextTypes.DEFAULT_TYPE):
 """ROSTER"""
 async def show_roster(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Shows the current roster."""
+
     await update.message.reply_text(
         text="👥 *Current Roster*\n\n"
-        f"*Monday*: {roster['Monday']}\n"
-        f"*Tuesday*: {roster['Tuesday']}\n"
-        f"*Wednesday*: {roster['Wednesday']}\n"
-        f"*Thursday*: {roster['Thursday']}\n"
-        f"*Friday*: {roster['Friday']}\n"
-        f"*Saturday*: {roster['Saturday']}\n"
-        f"*Sunday*: {roster['Sunday']}\n",
+        f"*Monday*: {roster['monday']}\n"
+        f"*Tuesday*: {roster['tuesday']}\n"
+        f"*Wednesday*: {roster['wednesday']}\n"
+        f"*Thursday*: {roster['thursday']}\n"
+        f"*Friday*: {roster['friday']}\n"
+        f"*Saturday*: {roster['saturday']}\n"
+        f"*Sunday*: {roster['sunday']}\n",
         parse_mode="markdown"
     )
 
@@ -196,8 +188,10 @@ async def edit_roster(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    day = context.args[0].capitalize()
+    day = context.args[0].lower()
     name = " ".join(context.args[1:])  # Combine multiple words for the name
+
+    await edit_fb_roster(day, name)
 
     if day not in roster:
         await update.message.reply_text(
@@ -209,7 +203,7 @@ async def edit_roster(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Update the roster
     roster[day] = name
     await update.message.reply_text(
-        text=f"✅ *Roster updated!* {day} is now assigned to {name}",
+        text=f"✅ *Roster updated!* {day.capitalize()} is now assigned to {name}",
         parse_mode="markdown"
     )
 """"""
