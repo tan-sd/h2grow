@@ -1,0 +1,15 @@
+TELEGRAM_BOT_KEY = ""
+CHANNEL_ID = ""
+NEA_24_HOUR_FORECAST_URL = "https://api-open.data.gov.sg/v2/real-time/api/twenty-four-hr-forecast"
+NEA_2_HOUR_FORECAST_URL = "https://api-open.data.gov.sg/v2/real-time/api/two-hr-forecast"
+
+FIREBASE_CONFIG = {
+    "apiKey": "",
+    "authDomain": "",
+  "databaseURL": "",
+  "projectId": "",
+  "storageBucket": "",
+  "messagingSenderId": "",
+  "appId": "",
+  "measurementId": ""
+}
