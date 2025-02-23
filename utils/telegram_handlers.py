@@ -88,7 +88,7 @@ async def send_reminder(context: ContextTypes.DEFAULT_TYPE):
     day_of_week = datetime.now().strftime("%A")
 
     # Get assigned person from the roster
-    assigned_person = roster.get(day_of_week, "No one assigned")
+    assigned_person = roster.get(day_of_week.lower(), "No one assigned")
 
     if hour_24_forecast in dry_weather:
         watering_message = "💧 *Please water the plants today!*\nLet's keep them happy and hydrated. 🌿✨"
