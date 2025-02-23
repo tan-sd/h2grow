@@ -191,14 +191,16 @@ async def edit_roster(update: Update, context: ContextTypes.DEFAULT_TYPE):
     day = context.args[0].lower()
     name = " ".join(context.args[1:])  # Combine multiple words for the name
 
-    await edit_fb_roster(day, name)
+    valid_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
-    if day not in roster:
+    if day not in valid_days:
         await update.message.reply_text(
-            text="❌*Invalid day!* Please enter a valid day (Monday to Sunday)",
+            text="❌ *Invalid day!* Please enter a valid day (Monday to Sunday)",
             parse_mode="markdown"
         )
         return
+    
+    await edit_fb_roster(day, name)
 
     # Update the roster
     roster[day] = name

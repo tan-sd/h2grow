@@ -18,4 +18,4 @@ def get_fb_roster():
 
 async def edit_fb_roster(day, new_roster):
     """Edits the roster in Firebase"""
-    db.child("roster").child(day).set(new_roster)
+    db.child("roster").child(day.lower()).set(new_roster)
