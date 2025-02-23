@@ -41,14 +41,14 @@ git clone https://github.com/tan-sd/h2grow.git
 ```
 
 ### 2. Create and activate Virtual Environment (if necessary)
-       # For windows
-       python -m venv myenv
-   
-       # For macOS/Linux
-       source myenv/bin/activate
-   
-       # Activate Virtual Environment
-       myenv\Scripts\activate
+      # Create Virtual Environment
+      python -m venv myenv
+      
+      # Activate Virtual Environment (For windows)
+      myenv\Scripts\activate
+      
+      # Activate Virtual Environment (For macOS/Linux)
+      source myenv/bin/activate
 
 ### 3. Install Dependency
 ```
