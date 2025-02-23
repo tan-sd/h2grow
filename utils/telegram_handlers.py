@@ -98,7 +98,7 @@ async def send_reminder(context: ContextTypes.DEFAULT_TYPE):
         watering_message = "🌧 *No watering needed today!*\nThe rain will take care of it. ☔️"
 
     message = (
-        f"[*Daily Reminder*]\n"
+        f"[Daily Reminder]\n"
         f"━━━━━━━━━━━━━━━━━━━━\n"
         f"📅 *{today}*\n"
         f"👤 *Gardener of the Day:* {assigned_person}\n"
